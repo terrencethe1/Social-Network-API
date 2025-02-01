@@ -75,3 +75,23 @@ const thoughtController = {
         if (!dbThoughtData) {
           return res.status(404).json({ message: 'Thought with this ID does not exist.' });
         }
+
+         // remove thought id from user's `thoughts` field
+         return User.findOneAndUpdate(
+            { thoughts: req.params.thoughtId },
+            { $pull: { thoughts: req.params.thoughtId } },
+            { new: true }
+          );
+        })
+        .then((dbUserData) => {
+          if (!dbUserData) {
+            return res.status(404).json({ message: 'Thought has been created but no user with this id!' });
+          }
+          res.json({ message: 'Thought has been deleted!' });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(500).json(err);
+        });
+    },
+  
